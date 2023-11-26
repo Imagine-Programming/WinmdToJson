@@ -13,7 +13,7 @@ jobs:
         id: get_dotnet_version
         shell: pwsh
         run: |
-          .\getDotNetVersion.ps1
+          .\Scripts\getDotNetVersion.ps1
       - name: Setup dotnet ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
         uses: actions/setup-dotnet@v3
         with:
