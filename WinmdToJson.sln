@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinmdToJson", "WinmdToJson\WinmdToJson.csproj", "{A125A719-A35A-4755-8A24-279F8FB1697C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A125A719-A35A-4755-8A24-279F8FB1697C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A125A719-A35A-4755-8A24-279F8FB1697C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A125A719-A35A-4755-8A24-279F8FB1697C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A125A719-A35A-4755-8A24-279F8FB1697C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A6C3C301-B0C7-4ECB-9EE3-EBF84441876E}
+	EndGlobalSection
+EndGlobal

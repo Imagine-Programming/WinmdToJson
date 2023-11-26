@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WinmdToJson": {
+      "commandName": "Project",
+      "commandLineArgs": "--input C:\\Users\\rickr\\.nuget\\packages\\microsoft.windows.sdk.win32metadata\\56.0.13-preview\\Windows.Win32.winmd"
+    }
+  }
+}
