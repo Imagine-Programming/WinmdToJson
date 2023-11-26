@@ -5,7 +5,10 @@ on:
       - 'main'
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -18,5 +21,11 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
-      - name: build project
-        run: dotnet build WinmdToJson/WinmdToJson.csproj
+      - name: Restore dependencies
+        run: dotnet restore
+    
+      - name: Build
+        run: dotnet build --no-restore
+    
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
