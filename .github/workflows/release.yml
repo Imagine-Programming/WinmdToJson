@@ -28,9 +28,9 @@ jobs:
     - name: Package Artifacts
       run: |
         if [ ${{ runner.os }} = 'Windows' ]; then
-          Compress-Archive -Path publish/* -DestinationPath YourApplication-${{ runner.os }}.zip
+          Compress-Archive -Path publish/* -DestinationPath WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
         else
-          tar -czvf YourApplication-${{ runner.os }}.tar.gz -C publish .
+          tar -czvf WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.tar.gz -C publish .
         fi
 
     - name: Create Release
