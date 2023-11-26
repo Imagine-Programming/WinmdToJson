@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get dotnet version
+      id: get_dotnet_version
+      shell: pwsh
+      run: |
+        .\Scripts\getDotNetVersion.ps1
+    - name: Setup dotnet ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
+    - name: Publish Release Build
+      run: dotnet publish --configuration Release --output publish/
+
+    - name: Zip Artifacts
+      run: |
+        Compress-Archive -Path publish/* -DestinationPath WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
+        asset_name: WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
+        asset_content_type: application/zip
