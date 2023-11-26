@@ -1,0 +1,22 @@
+name: Build
+on:
+  pull_request:
+    branches:
+      - 'main'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Get dotnet version
+        id: get_dotnet_version
+        shell: pwsh
+        run: |
+          .\getDotNetVersion.ps1
+      - name: Setup dotnet ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
+      - name: build project
+        run: dotnet build WinmdToJson/WinmdToJson.csproj
