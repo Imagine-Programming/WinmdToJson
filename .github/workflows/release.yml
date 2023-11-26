@@ -25,9 +25,13 @@ jobs:
     - name: Publish Release Build
       run: dotnet publish --configuration Release --output publish/
 
-    - name: Zip Artifacts
+    - name: Package Artifacts
       run: |
-        Compress-Archive -Path publish/* -DestinationPath WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
+        if [ ${{ runner.os }} = 'Windows' ]; then
+          Compress-Archive -Path publish/* -DestinationPath YourApplication-${{ runner.os }}.zip
+        else
+          tar -czvf YourApplication-${{ runner.os }}.tar.gz -C publish .
+        fi
 
     - name: Create Release
       id: create_release
