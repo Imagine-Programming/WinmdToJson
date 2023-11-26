@@ -26,9 +26,15 @@ jobs:
       run: |
         dotnet publish -c Release -o publish
 
-    - name: Package Application
+    - name: Package Application (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        Compress-Archive -Path publish -DestinationPath WinmdToJson_${{ matrix.os }}_${{ github.run_number }}.zip
+    - name: Package Application (Linux/Mac)
+      if: runner.os != 'Windows'
       run: |
         zip -r WinmdToJson_${{ matrix.os }}_${{ github.run_number }}.zip publish
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
