@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
@@ -22,34 +22,43 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ steps.get_dotnet_version.outputs.dotNetVersion }}
-    - name: Publish Release Build
-      run: dotnet publish --configuration Release --output publish/
-
-    - name: Package Artifacts
+    - name: Build and Publish
       run: |
-        if [ ${{ runner.os }} = 'Windows' ]; then
-          Compress-Archive -Path publish/* -DestinationPath WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
-        else
-          tar -czvf WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.tar.gz -C publish .
-        fi
+        dotnet publish -c Release -o publish
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Package Application
+      run: |
+        zip -r WinmdToJson_${{ matrix.os }}_${{ github.run_number }}.zip publish
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
       with:
-        tag_name: ${{ github.run_number }}
-        release_name: Release ${{ github.run_number }}
-        draft: false
-        prerelease: false
+        name: ${{ runner.os }}-app
+        path: WinmdToJson_${{ matrix.os }}_${{ github.run_number }}.zip
 
-    - name: Upload Release Artifact
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
-        asset_name: WinmdToJson-${{ matrix.os }}-${{ github.run_number }}.zip
-        asset_content_type: application/zip
+  create_release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./*.zip
+          asset_name: ./*.zip
+          asset_content_type: application/zip
