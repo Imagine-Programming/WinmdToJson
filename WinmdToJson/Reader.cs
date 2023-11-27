@@ -205,7 +205,9 @@ internal class Reader
         {
             var method = _reader.GetMethodDefinition(methodHandle);
             var methodName = _reader.GetString(method.Name);
-            var importAttributes = method.GetImport().Attributes.GetFlagsAsStrings();
+            var import = method.GetImport();
+            var importAttributes = import.Attributes
+                .GetFlagsAsStrings();
             var parameters = method.GetParameters()
                 .Select(_reader.GetParameter)
                 .OrderBy(p => p.SequenceNumber)
@@ -227,6 +229,14 @@ internal class Reader
                 CustomAttributes = method.GetCustomAttributes()
                     .ToAttributeType(_attributeDecoder, _reader)
             };
+
+            // gets the exporting dll if available
+            if(!import.Module.IsNil)
+            {
+                var module = _reader.GetModuleReference(import.Module);
+                var moduleName = _reader.GetString(module.Name);
+                function.Module = moduleName;
+            }
 
             if (parameters.Count > 0)
                 function.Parameters = [];
