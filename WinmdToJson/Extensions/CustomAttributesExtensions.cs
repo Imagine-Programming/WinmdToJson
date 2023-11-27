@@ -36,7 +36,17 @@ internal static class CustomAttributesExtensions
             .Select(c =>
             {
                 var decoded = c.DecodeValue(decoder);
+                var attributeName = c.GetAttributeTypeName(reader);
+
+
                 var fixedParams = decoded.FixedArguments.Select(k => k.Value).ToList();
+
+                if (attributeName == "Windows.Win32.Foundation.Metadata.GuidAttribute")
+                {
+                    var numbers = fixedParams!.Select(f => UInt32.Parse(f!.ToString()!)).ToList();
+                    fixedParams = [Utils.ParseGuid(numbers)];
+                }
+
                 var namedParams = decoded.NamedArguments.Select(k => new KeyValuePair<string, object?>(k.Name!, k.Value)).ToList();
 
                 if (fixedParams.Count == 0)
@@ -45,7 +55,7 @@ internal static class CustomAttributesExtensions
                 if (namedParams.Count == 0)
                     namedParams = null;
 
-                return new CustomAttribute(c.GetAttributeTypeName(reader))
+                return new CustomAttribute(attributeName)
                 {
                     NamedParameters = namedParams,
                     FixedParameters = fixedParams
