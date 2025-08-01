@@ -238,6 +238,9 @@ internal class Reader
                 function.Module = moduleName;
             }
 
+            if (signature.ReturnType != null)
+                function.ReturnType = signature.ReturnType;
+
             if (parameters.Count > 0)
                 function.Parameters = [];
 
