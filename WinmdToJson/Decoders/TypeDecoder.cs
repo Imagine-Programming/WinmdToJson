@@ -14,10 +14,12 @@ internal class TypeDecoder(Dictionary<string, Reference<BaseType>> registry)
     {
         ArgumentNullException.ThrowIfNull(elementType.Value, nameof(elementType));
 
-        // we don't store array types in the registry, we simply create a new one to be used directly
         var reference = new Reference<BaseType>
         {
             Value = new ArrayType(elementType.Value.Name, elementType.Value.Namespace, shape)
+            {
+                ElementType = elementType
+            }
         };
 
         return reference;
@@ -79,7 +81,20 @@ internal class TypeDecoder(Dictionary<string, Reference<BaseType>> registry)
 
     public Reference<BaseType> GetSZArrayType(Reference<BaseType> elementType)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(elementType.Value, nameof(elementType));
+
+        // SZArray is a single-dimensional, zero-based array
+        var shape = new ArrayShape(1, ImmutableArray<int>.Empty, ImmutableArray<int>.Empty);
+
+        var reference = new Reference<BaseType>
+        {
+            Value = new ArrayType(elementType.Value.Name, elementType.Value.Namespace, shape)
+            {
+                ElementType = elementType
+            }
+        };
+
+        return reference;
     }
 
     public Reference<BaseType> GetTypeFromDefinition(MetadataReader reader, TypeDefinitionHandle handle, byte rawTypeKind)
