@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Win32MetadataJsonGen.Converters;
 using Win32MetadataJsonGen.Models;
 
 namespace Win32MetadataJsonGen;
@@ -13,7 +12,6 @@ internal class Writer
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
         Converters = {
             new JsonStringEnumConverter(),
-            new ReferenceJsonConverter() // Add this line
         }
     };
 
